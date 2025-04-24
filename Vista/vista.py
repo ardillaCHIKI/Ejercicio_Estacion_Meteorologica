@@ -34,11 +34,11 @@ class VistaGradio:
             return "\n".join(estaciones)
 
         with gr.Blocks() as interfaz:
-            gr.Markdown("## 🌤️ **Sistema de Gestión Meteorológica**")
+            gr.Markdown("## **Sistema de Gestión Meteorológica**")
             gr.Markdown("### ¡Gestiona tus estaciones con estilo!")
 
             with gr.Row():
-                gr.Markdown("### 🌧️ **Agregar Nueva Estación**")
+                gr.Markdown("### **Agregar Nueva Estación**")
                 nombre_estacion = gr.Textbox(label="Nombre de la Estación", placeholder="Ejemplo: Lluvia")
                 salida_agregar = gr.Textbox(label="Estado de la Operación")
                 boton_agregar = gr.Button("Agregar Estación")
@@ -46,7 +46,7 @@ class VistaGradio:
             boton_agregar.click(fn=agregar_estacion, inputs=[nombre_estacion], outputs=[salida_agregar])
 
             with gr.Row():
-                gr.Markdown("### ☀️ **Registrar Datos Meteorológicos**")
+                gr.Markdown("### **Registrar Datos Meteorológicos**")
                 nombre_estacion_registro = gr.Textbox(label="Nombre de la Estación", placeholder="Ejemplo: Sol")
                 datos_registro = gr.Textbox(label="Datos a Registrar", placeholder="Ejemplo: Martes 19°C")
                 salida_registro = gr.Textbox(label="Estado del Registro")
@@ -55,7 +55,7 @@ class VistaGradio:
             boton_registrar.click(fn=registrar_datos, inputs=[nombre_estacion_registro, datos_registro], outputs=[salida_registro])
 
             with gr.Row():
-                gr.Markdown("### 🌥️ **Consultar Datos de una Estación**")
+                gr.Markdown("### **Consultar Datos de una Estación**")
                 consulta_estacion = gr.Textbox(label="Nombre de la Estación", placeholder="Ejemplo: Nublado")
                 salida_datos = gr.Textbox(label="Datos Registrados")
                 boton_consultar = gr.Button("Ver Datos")
@@ -63,14 +63,14 @@ class VistaGradio:
             boton_consultar.click(fn=obtener_datos, inputs=[consulta_estacion], outputs=[salida_datos])
 
             with gr.Row():
-                gr.Markdown("### ❄️ **Guardar Datos en Archivo CSV**")
+                gr.Markdown("### **Guardar Datos en Archivo CSV**")
                 nombre_guardar = gr.Textbox(label="Nombre de la Estación", placeholder="Ejemplo: Nevado")
                 salida_guardado = gr.Textbox(label="Estado del Guardado")
                 boton_guardar = gr.Button("Guardar en archivo.csv")
 
             boton_guardar.click(fn=self.guardar_en_csv, inputs=[nombre_guardar], outputs=[salida_guardado])
 
-            gr.Markdown("### 📋 **Estaciones Meteorológicas Disponibles**")
+            gr.Markdown("### **Estaciones Meteorológicas Disponibles**")
             lista_estaciones = gr.Textbox(label="Lista de Estaciones", interactive=False)
             boton_listar = gr.Button("Actualizar Lista")
 
