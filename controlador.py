@@ -1,23 +1,14 @@
-import os
 import pygame
-from modelo import StationList
-from vista import WeatherView
+from Modelo.tda_lista_lista import Lista, insertar, buscar
+from vista import Vista
 
-class WeatherController:
+class Controlador:
     def __init__(self):
-        # Inicializar modelo y vista
-        self.model = StationList()
-        self.view = WeatherView()
-        self.running = True
+        self.estaciones = Lista()
+        self.vista = Vista()
+        self.ejecutando = True
 
-    def run(self):
-        # Deshabilitar el sonido de pygame
-        os.environ["SDL_AUDIODRIVER"] = "dummy"
-
-        # Inicializar pygame
-        pygame.init()
-
-        # Crear datos de ejemplo
+    def agregar_datos(self):
         estaciones = ['A', 'G', 'L', 'I', 'O', 'Y']
         climas = [
             ['☀', '🌧', '🌫'],
@@ -28,22 +19,20 @@ class WeatherController:
             ['🌫', '🌧']
         ]
 
-        # Agregar estaciones y climas al modelo
-        for nombre, datos in zip(estaciones, climas):
-            estacion = self.model.add_station(nombre)
-            for clima in datos:
-                estacion.add_weather(clima)
+        for nombre, estados in zip(estaciones, climas):
+            insertar(self.estaciones, nombre)
+            nodo = buscar(self.estaciones, nombre)
+            for clima in estados:
+                insertar(nodo.sublista, clima)
 
-        # Bucle principal
-        try:
-            while self.running:
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        self.running = False
-                self.view.draw(self.model)
-        except Exception as e:
-            print(f"Error durante la ejecución: {e}")
-        finally:
-            # Finalizar pygame y cerrar la vista
-            self.view.quit()
-            pygame.quit()
+    def correr(self):
+        self.agregar_datos()
+
+        while self.ejecutando:
+            for evento in pygame.event.get():
+                if evento.type == pygame.QUIT:
+                    self.ejecutando = False
+
+            self.vista.dibujar(self.estaciones)
+
+        self.vista.salir()

@@ -1,37 +1,38 @@
 import pygame
 
-class WeatherView:
-    def __init__(self, width=800, height=600):
-        pygame.init()
-        self.screen = pygame.display.set_mode((width, height))
+class Vista:
+    def __init__(self):
+        pygame.display.init()
+        pygame.font.init()
+        self.pantalla = pygame.display.set_mode((800, 600))
         pygame.display.set_caption("Estaciones Meteorológicas")
-        self.font = pygame.font.SysFont(None, 24)
-        self.clock = pygame.time.Clock()
+        self.fuente = pygame.font.SysFont(None, 24)
+        self.reloj = pygame.time.Clock()
 
-    def draw(self, station_list):
-        self.screen.fill((255, 255, 255))
+    def dibujar(self, estaciones):
+        self.pantalla.fill((255, 255, 255))
         x, y = 50, 50
-        station = station_list.head
+        actual = estaciones.cabeza
 
-        while station:
-            pygame.draw.rect(self.screen, (255, 100, 100), (x, y, 40, 40))
-            text = self.font.render(station.name, True, (0, 0, 0))
-            self.screen.blit(text, (x + 50, y + 10))
+        while actual:
+            pygame.draw.rect(self.pantalla, (255, 100, 100), (x, y, 40, 40))
+            texto = self.fuente.render(actual.dato, True, (0, 0, 0))
+            self.pantalla.blit(texto, (x + 50, y + 10))
 
-            weather_node = station.sublist_head
-            wx = x + 120
-            while weather_node:
-                pygame.draw.rect(self.screen, (100, 200, 255), (wx, y, 40, 40))
-                wtext = self.font.render(weather_node.data, True, (0, 0, 0))
-                self.screen.blit(wtext, (wx + 5, y + 10))
-                wx += 70
-                weather_node = weather_node.next
+            sub_actual = actual.sublista.cabeza
+            sub_x = x + 120
+            while sub_actual:
+                pygame.draw.rect(self.pantalla, (100, 200, 255), (sub_x, y, 40, 40))
+                sub_txt = self.fuente.render(sub_actual.dato, True, (0, 0, 0))
+                self.pantalla.blit(sub_txt, (sub_x + 5, y + 10))
+                sub_actual = sub_actual.siguiente
+                sub_x += 70
 
             y += 70
-            station = station.next
+            actual = actual.siguiente
 
         pygame.display.flip()
-        self.clock.tick(30)
+        self.reloj.tick(30)
 
-    def quit(self):
+    def salir(self):
         pygame.quit()

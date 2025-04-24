@@ -1,5 +1,5 @@
-from controlador import WeatherController
+from controlador import Controlador
 
 if __name__ == "__main__":
-    controller = WeatherController()
-    controller.run()
+    app = Controlador()
+    app.correr()
