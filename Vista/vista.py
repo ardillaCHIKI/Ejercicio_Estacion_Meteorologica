@@ -1,44 +1,49 @@
-import gradio as gr
+from cryptography.fernet import Fernet
 
-class VistaGradio:
-    def __init__(self, controlador):
-        self.controlador = controlador
+def cargar_o_generar_clave():
+    try:
+        with open("key.key", "rb") as key_file:
+            key = key_file.read()
+            if len(key) != 44:  # La clave debe tener exactamente 44 caracteres en base64
+                raise ValueError("Clave incorrecta, regenerando...")
+    except (FileNotFoundError, ValueError):
+        key = Fernet.generate_key()
+        with open("key.key", "wb") as key_file:
+            key_file.write(key)
+    return key
 
-    def mostrar_interfaz(self):
-        def agregar_estacion(nombre):
-            self.controlador.agregar_estacion(nombre)
-            return f"Estación '{nombre}' agregada correctamente."
+key = cargar_o_generar_clave()
+cipher_suite = Fernet(key)
 
-        def registrar_datos(nombre, datos):
-            self.controlador.registrar_datos(nombre, datos)
-            return f"Dato registrado en '{nombre}': {datos}"
+class EstacionMeteorologica:
+    def __init__(self, nombre):
+        self.nombre = nombre
+        self.datos_encriptados = []
 
-        def obtener_datos(nombre):
-            datos = self.controlador.obtener_datos(nombre)
-            return "\n".join(datos) if datos else "No hay datos para esta estación."
+    def registrar_datos(self, datos):
+        encrypted_data = cipher_suite.encrypt(datos.encode())
+        self.datos_encriptados.append(encrypted_data)
 
-        interfaz_agregar = gr.Interface(
-            fn=agregar_estacion,
-            inputs="text",
-            outputs="text",
-            title="Agregar Nueva Estación Meteorológica"
-        )
+    def obtener_datos(self):
+        return [cipher_suite.decrypt(d).decode() for d in self.datos_encriptados]
 
-        interfaz_registro = gr.Interface(
-            fn=registrar_datos,
-            inputs=["text", "text"],
-            outputs="text",
-            title="Registrar Datos Meteorológicos"
-        )
+class SistemaMeteorologico:
+    def __init__(self):
+        self.estaciones = {}
 
-        interfaz_visualizacion = gr.Interface(
-            fn=obtener_datos,
-            inputs="text",
-            outputs="text",
-            title="Ver Datos de una Estación"
-        )
+        estaciones_predefinidas = ["Lluvia", "Sol", "Nublado", "Nevado", "Tormenta", "Neblina", "Viento fuerte"]
+        for nombre in estaciones_predefinidas:
+            self.agregar_estacion(nombre)
 
-        gr.TabbedInterface(
-            [interfaz_agregar, interfaz_registro, interfaz_visualizacion],
-            ["Agregar Estación", "Registrar Datos", "Ver Datos"]
-        ).launch()
+    def agregar_estacion(self, nombre):
+        if nombre not in self.estaciones:
+            self.estaciones[nombre] = EstacionMeteorologica(nombre)
+
+    def registrar_datos_estacion(self, nombre, datos):
+        if nombre in self.estaciones:
+            self.estaciones[nombre].registrar_datos(datos)
+
+    def obtener_datos_estacion(self, nombre):
+        if nombre in self.estaciones:
+            return self.estaciones[nombre].obtener_datos()
+        return []
