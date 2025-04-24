@@ -1,0 +1,11 @@
+# Archivos de entorno y caché
+__pycache__/
+venv/
+.env
+
+# Archivos de configuración del sistema
+*.log
+
+# Evitar subir archivos de datos privados
+datos_meteorologicos.csv
+clave_secreta.key  # Clave secreta de encriptación HMAC
